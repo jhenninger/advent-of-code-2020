@@ -2,22 +2,13 @@ fn main() {
     let mut seats: Vec<_> = include_str!("../input")
         .lines()
         .map(|line| {
-            let mut f = 0;
-            let mut b = 127;
-            let mut l = 0;
-            let mut r = 7;
-
-            for c in line.chars() {
-                match c {
-                    'F' => b = (f + b) / 2,
-                    'B' => f = ((f + b) as f64 / 2.0).ceil() as u64,
-                    'L' => r = (l + r) / 2,
-                    'R' => l = ((l + r) as f64 / 2.0).ceil() as u64,
-                    wtf => panic!("wtf {}", wtf),
+            let mut seat = 0;
+            for (i, c) in line.as_bytes().iter().rev().enumerate() {
+                if b"BR".contains(c) {
+                    seat |= 1 << i;
                 }
             }
-
-            f * 8 + l
+            seat
         })
         .collect();
 
