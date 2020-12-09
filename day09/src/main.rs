@@ -1,4 +1,4 @@
-use std::collections::HashSet;
+use std::{cmp::Ordering, collections::HashSet};
 
 fn main() {
     let input = include_str!("../input");
@@ -29,24 +29,27 @@ fn part_1(numbers: &[isize]) -> Option<isize> {
 
 fn part_2(numbers: &[isize], needle: isize) -> Option<isize> {
     let mut sum = 0;
-    let mut lo = 0;
-    let mut hi = 0;
+    let mut lo = 0; // inclusive
+    let mut hi = 0; // exclusive
 
-    while hi < numbers.len() {
-        sum += numbers[hi];
-        hi += 1;
-
-        while sum > needle {
-            sum -= numbers[lo];
-            lo += 1;
-        }
-
-        if sum == needle {
-            let iter = numbers[lo..hi].iter();
-            let min = iter.clone().min();
-            let max = iter.max();
-            return Some(min? + max?);
+    while lo < numbers.len() && hi <= numbers.len() {
+        match sum.cmp(&needle) {
+            Ordering::Greater => {
+                sum -= numbers[lo];
+                lo += 1;
+            }
+            Ordering::Equal if hi - lo > 1 => {
+                let iter = numbers[lo..hi].iter();
+                let min = iter.clone().min();
+                let max = iter.max();
+                return Some(min? + max?);
+            }
+            _ => {
+                sum += numbers[hi];
+                hi += 1;
+            }
         }
     }
+
     None
 }
