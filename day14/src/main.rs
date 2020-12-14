@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::{collections::HashMap};
 
 enum Instr {
     Mask(Mask),
@@ -37,18 +37,11 @@ impl Mask {
         address |= self.bits; // set ones
 
         let combinations = 2u64.pow(self.x.count_ones());
+        let mut current_mask = !floating;
 
-        (0..combinations).map(move |mut i| {
-            let mut address = address;
-            let mut target = 0; // position of the bit we are setting in address
-
-            while i > 0 {
-                target += (floating >> target).trailing_zeros();
-                address |= (i & 1) << target;
-                i >>= 1;
-                target += 1;
-            }
-
+        (0..combinations).map(move |_| {
+            let address = address | (current_mask & floating);
+            current_mask = (current_mask + 1) | !floating;
             address
         })
     }
