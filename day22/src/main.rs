@@ -74,10 +74,13 @@ fn recursive(p1: &mut VecDeque<u8>, p2: &mut VecDeque<u8>) -> bool {
         let c2 = p2.pop_front().unwrap();
 
         let p1_wins = if p1.len() >= c1 as usize && p2.len() >= c2 as usize {
-            recursive(
-                &mut p1.iter().cloned().take(c1 as usize).collect(),
-                &mut p2.iter().cloned().take(c2 as usize).collect(),
-            )
+            let p1_iter = p1.iter().take(c1 as usize).cloned();
+            let p2_iter = p2.iter().take(c2 as usize).cloned();
+            if p1_iter.clone().max().unwrap() > p2_iter.clone().max().unwrap() {
+                true
+            } else {
+                recursive(&mut p1_iter.collect(), &mut p2_iter.collect())
+            }
         } else {
             c1 > c2
         };
